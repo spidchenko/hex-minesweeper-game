@@ -1,17 +1,18 @@
 package d.spidchenko.canvasgame;
 
+import android.graphics.Point;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity implements View.OnTouchListener {
 
-    public static boolean isLeftPressed = false; // нажата левая кнопка
-    public static boolean isRightPressed = false; // нажата правая кнопка
+    private static final String TAG = "MainActivity.LOG_TAG";
+    public static Point tapPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,36 +24,14 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         LinearLayout gameLayout = (LinearLayout) findViewById(R.id.gameLayout); // находим gameLayout
         gameLayout.addView(gameView); // и добавляем в него gameView
 
-        Button leftButton = (Button) findViewById(R.id.leftButton); // находим кнопки
-        Button rightButton = (Button) findViewById(R.id.rightButton);
+        gameLayout.setOnTouchListener(this);
 
-        leftButton.setOnTouchListener(this); // и добавляем этот класс как слушателя (при нажатии сработает onTouch)
-        rightButton.setOnTouchListener(this);
     }
 
-    public boolean onTouch(View button, MotionEvent motion) {
-        switch(button.getId()) { // определяем какая кнопка
-            case R.id.leftButton:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        isLeftPressed = true;
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        isLeftPressed = false;
-                        break;
-                }
-                break;
-            case R.id.rightButton:
-                switch (motion.getAction()) { // определяем нажата или отпущена
-                    case MotionEvent.ACTION_DOWN:
-                        isRightPressed = true;
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        isRightPressed = false;
-                        break;
-                }
-                break;
-        }
-        return true;
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        Log.d(TAG, "onTouch: " + (int) event.getX() + " " + (int) event.getY());
+        tapPosition = new Point((int) event.getX(), (int) event.getY());
+        return false;
     }
 }
