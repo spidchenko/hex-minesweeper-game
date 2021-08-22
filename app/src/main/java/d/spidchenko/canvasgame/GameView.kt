@@ -1,177 +1,154 @@
-package d.spidchenko.canvasgame;
+package d.spidchenko.canvasgame
 
-import static java.lang.Math.sqrt;
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Point
+import android.util.Log
+import android.view.SurfaceView
+import d.spidchenko.canvasgame.Hexagon
+import android.view.SurfaceHolder
+import d.spidchenko.canvasgame.GameView
+import d.spidchenko.canvasgame.MainActivity
+import java.util.ArrayList
+import kotlin.math.pow
+import kotlin.math.roundToInt
+import kotlin.math.sqrt
 
-import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
-import android.util.Log;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-
-import java.util.ArrayList;
-
-public class GameView extends SurfaceView implements Runnable {
-    private static final String TAG = "GameView.LOG_TAG";
-
-    private boolean firstTime = true;
-    private boolean gameRunning = true;
-    private int paddingSize = 100;
-    private int maxX;
-    private int maxY;
-
-    private ArrayList<Hexagon> hexagons;
-    private Thread gameThread = null;
-    private Paint paint;
-    private Paint thinPaint;
-    private Canvas canvas;
-    private SurfaceHolder surfaceHolder;
-
-    public GameView(Context context) {
-        super(context);
-        //инициализируем обьекты для рисования
-        surfaceHolder = getHolder();
-        paint = new Paint();
-        paint.setColor(Color.YELLOW);
-        paint.setStyle(Paint.Style.STROKE);
-        paint.setStrokeWidth(10);
-
-        thinPaint = new Paint();
-        thinPaint.setColor(Color.RED);
-        thinPaint.setStyle(Paint.Style.STROKE);
-        thinPaint.setStrokeWidth(1);
-
-        // инициализируем поток
-        gameThread = new Thread(this);
-        gameThread.start();
+class GameView(context: Context?) : SurfaceView(context), Runnable {
+    private var firstTime = true
+    private val gameRunning = true
+    private val paddingSize = 100
+    private var maxX = 0
+    private var maxY = 0
+    private var hexagons: ArrayList<Hexagon>? = null
+    private var gameThread: Thread? = null
+    private val paint: Paint = Paint().apply {
+        isAntiAlias = true
+        color = Color.YELLOW
+        style = Paint.Style.STROKE
+        strokeWidth = 10f
     }
-
-    @Override
-    public void run() {
+    private val thinPaint: Paint
+    private var canvas: Canvas? = null
+    private val surfaceHolder: SurfaceHolder = holder
+    override fun run() {
         while (gameRunning) {
-            draw();
+            draw()
         }
     }
 
-//    private void update() {
-//        if(!firstTime) {
-//            ship.update();
-//            for (Asteroid asteroid : asteroids) {
-//                asteroid.update();
-//            }
-//        }
-//    }
-
-    private void init() {
-
-        maxX = surfaceHolder.getSurfaceFrame().width();
-        maxY = surfaceHolder.getSurfaceFrame().height();
-
-
-        int horizontalSpacing = (int) Math.round(Hexagon.HEX_SIZE * sqrt(3));
-        int verticalSpacing = (int) Math.round(1.5 * Hexagon.HEX_SIZE);
-
-        Hexagon.zeroCenter = new Point(maxX / 2, maxY / 2);
-
-        int numRows = (maxX - 2 * paddingSize) / horizontalSpacing;
-        int numColumns = (maxY - 2 * paddingSize) / verticalSpacing;
-
-        Log.d(TAG, "init: numRows = " + numRows);
-        Log.d(TAG, "init: numColumns = " + numColumns);
-
-        fillWithHexagons();
-
-
+    //    private void update() {
+    //        if(!firstTime) {
+    //            ship.update();
+    //            for (Asteroid asteroid : asteroids) {
+    //                asteroid.update();
+    //            }
+    //        }
+    //    }
+    private fun init() {
+        maxX = surfaceHolder.surfaceFrame.width()
+        maxY = surfaceHolder.surfaceFrame.height()
+        val horizontalSpacing = (Hexagon.HEX_SIZE * sqrt(3.0)).roundToInt()
+        val verticalSpacing = (1.5 * Hexagon.HEX_SIZE).roundToInt()
+        Hexagon.zeroCenter = Point(maxX / 2, maxY / 2)
+        val numRows = (maxX - 2 * paddingSize) / horizontalSpacing
+        val numColumns = (maxY - 2 * paddingSize) / verticalSpacing
+        Log.d(TAG, "init: numRows = $numRows")
+        Log.d(TAG, "init: numColumns = $numColumns")
+        fillWithHexagons()
     }
 
-    private void fillWithHexagons() {
-        hexagons = new ArrayList<>();
-        for (int q = -7; q <= 7; q++)
-            for (int r = -6; r <= 6; r++) {
-                //check if visible
-                double newXCord = Hexagon.zeroCenter.x + Hexagon.HEX_SIZE * (sqrt(3) * q + sqrt(3) / 2 * r);
-                if ((newXCord > paddingSize) &&(newXCord < maxX - paddingSize)){
-                    hexagons.add(new Hexagon(q, r));
-                }
-
-
+    private fun fillWithHexagons() {
+        hexagons = ArrayList()
+        for (q in -7..7) for (r in -6..6) {
+            //check if visible
+            val newXCord = Hexagon.zeroCenter!!.x + Hexagon.HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r)
+            if (newXCord > paddingSize && newXCord < maxX - paddingSize) {
+                hexagons!!.add(Hexagon(q, r))
             }
+        }
     }
 
-    private void draw() {
-        if (surfaceHolder.getSurface().isValid()) {  //проверяем валидный ли surface
-
+    private fun draw() {
+        if (surfaceHolder.surface.isValid) {  //проверяем валидный ли surface
             if (firstTime) { // инициализация при первом запуске
-                init();
-                firstTime = false;
-//                unitW = surfaceHolder.getSurfaceFrame().width()/maxX; // вычисляем число пикселей в юните
+                init()
+                firstTime = false
+                //                unitW = surfaceHolder.getSurfaceFrame().width()/maxX; // вычисляем число пикселей в юните
 //                unitH = surfaceHolder.getSurfaceFrame().height()/maxY;
 //                ship = new Ship(getContext()); // добавляем корабль
             }
-
-            canvas = surfaceHolder.lockCanvas(); // закрываем canvas
+            canvas = surfaceHolder.lockCanvas() // закрываем canvas
             //todo NullPointerException here! on sleep ...
-            canvas.drawColor(Color.BLACK); // заполняем фон чёрным
-
-            for (Hexagon hexagon : hexagons) {
-                hexagon.draw(canvas, thinPaint);
+            canvas!!.drawColor(Color.BLACK) // заполняем фон чёрным
+            for (hexagon in hexagons!!) {
+                hexagon.draw(canvas!!, thinPaint)
             }
-
             if (MainActivity.tapPosition != null) {
-                Point tap = MainActivity.tapPosition;
-//                canvas.drawPoint(tap.x, tap.y, paint);
-
-                int nearestHexIndex = 0;
-                double minDistance = Double.MAX_VALUE;
-                for (int i = 0; i < hexagons.size(); i++) {
-                    double distance = sqrt(
-                            Math.pow((hexagons.get(i).centerPoint.x - tap.x), 2) + Math.pow((hexagons.get(i).centerPoint.y - tap.y), 2)
-                    );
+                val tap = MainActivity.tapPosition
+                //                canvas.drawPoint(tap.x, tap.y, paint);
+                var nearestHexIndex = 0
+                var minDistance = Double.MAX_VALUE
+                for (i in hexagons!!.indices) {
+                    val distance = sqrt(
+                            (hexagons!![i].centerPoint.x - tap!!.x).toDouble().pow(2.0) + (hexagons!![i].centerPoint.y - tap.y).toDouble().pow(2.0)
+                    )
                     if (distance < minDistance) {
-                        minDistance = distance;
-                        nearestHexIndex = i;
+                        minDistance = distance
+                        nearestHexIndex = i
                     }
                 }
-
                 if (minDistance < Hexagon.HEX_SIZE) {
-                    hexagons.get(nearestHexIndex).draw(canvas, paint);
+                    hexagons!![nearestHexIndex].draw(canvas!!, paint)
                 }
-
             }
-
-            surfaceHolder.unlockCanvasAndPost(canvas); // открываем canvas
+            surfaceHolder.unlockCanvasAndPost(canvas) // открываем canvas
         }
+    } //    private void control() { // пауза на 17 миллисекунд
+
+    //        try {
+    //            gameThread.sleep(17);
+    //        } catch (InterruptedException e) {
+    //            e.printStackTrace();
+    //        }
+    //    }
+    //    private void checkCollision(){ // перебираем все астероиды и проверяем не касается ли один из них корабля
+    //        for (Asteroid asteroid : asteroids) {
+    //            if(asteroid.isCollision(ship.x, ship.y, ship.size)){
+    //                // игрок проиграл
+    //                gameRunning = false; // останавливаем игру
+    //                // TODO добавить анимацию взрыва
+    //            }
+    //        }
+    //    }
+    //    private void checkIfNewAsteroid(){ // каждые 50 итераций добавляем новый астероид
+    //        if(currentTime >= ASTEROID_INTERVAL){
+    //            Asteroid asteroid = new Asteroid(getContext());
+    //            asteroids.add(asteroid);
+    //            currentTime = 0;
+    //        }else{
+    //            currentTime ++;
+    //        }
+    //    }
+    companion object {
+        private const val TAG = "GameView.LOG_TAG"
     }
 
+    init {
+        //инициализируем обьекты для рисования
+        //        paint.color = Color.YELLOW
+//        paint.style = Paint.Style.STROKE
+//        paint.strokeWidth = 10f
 
-//    private void control() { // пауза на 17 миллисекунд
-//        try {
-//            gameThread.sleep(17);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//    }
+        thinPaint = Paint()
+        thinPaint.color = Color.RED
+        thinPaint.style = Paint.Style.STROKE
+        thinPaint.strokeWidth = 1f
 
-//    private void checkCollision(){ // перебираем все астероиды и проверяем не касается ли один из них корабля
-//        for (Asteroid asteroid : asteroids) {
-//            if(asteroid.isCollision(ship.x, ship.y, ship.size)){
-//                // игрок проиграл
-//                gameRunning = false; // останавливаем игру
-//                // TODO добавить анимацию взрыва
-//            }
-//        }
-//    }
-
-//    private void checkIfNewAsteroid(){ // каждые 50 итераций добавляем новый астероид
-//        if(currentTime >= ASTEROID_INTERVAL){
-//            Asteroid asteroid = new Asteroid(getContext());
-//            asteroids.add(asteroid);
-//            currentTime = 0;
-//        }else{
-//            currentTime ++;
-//        }
-//    }
-
+        // инициализируем поток
+        gameThread = Thread(this)
+        gameThread!!.start()
+    }
 }
