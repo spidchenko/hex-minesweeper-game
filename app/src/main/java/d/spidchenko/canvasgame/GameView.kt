@@ -21,7 +21,9 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
     private val paddingSize = 100
     private var maxX = 0
     private var maxY = 0
-    private var cells: ArrayList<Cell>? = null
+
+    //TODO set number of cells here
+    private var cells = mutableListOf<Cell>()
     private var gameThread: Thread? = null
     private val paint: Paint = Paint().apply {
         isAntiAlias = true
@@ -64,14 +66,18 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
         fillWithHexagons()
     }
 
+    private fun setMines() {
+
+    }
+
     private fun fillWithHexagons() {
-        cells = ArrayList()
+        //TODO replace magick numbers
         for (q in -7..7) for (r in -6..6) {
             //check if visible
             val newXCord =
-                Cell.gameFieldCenter.x + Cell.HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r)
+                    Cell.gameFieldCenter.x + Cell.HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r)
             if (newXCord > paddingSize && newXCord < maxX - paddingSize) {
-                cells!!.add(Cell(q, r))
+                cells.add(Cell(q, r))
             }
         }
     }
@@ -86,7 +92,7 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
             canvas = surfaceHolder.lockCanvas()
             //todo NullPointerException here! on sleep ...
             canvas?.drawColor(Color.BLACK)
-            for (hexagon in cells!!) {
+            for (hexagon in cells) {
 
                 hexagon.draw(canvas!!, thinPaint, textPaint)
             }
@@ -94,10 +100,10 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
                 val tap = MainActivity.tapPosition
                 var nearestHexIndex = 0
                 var minDistance = Double.MAX_VALUE
-                for (i in cells!!.indices) {
+                for (i in cells.indices) {
                     val distance = sqrt(
-                        (cells!![i].centerPoint.x - tap!!.x).toDouble()
-                            .pow(2.0) + (cells!![i].centerPoint.y - tap.y).toDouble().pow(2.0)
+                            (cells[i].centerPoint.x - tap!!.x).toDouble()
+                                    .pow(2.0) + (cells[i].centerPoint.y - tap.y).toDouble().pow(2.0)
                     )
                     if (distance < minDistance) {
                         minDistance = distance
@@ -105,8 +111,8 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
                     }
                 }
                 if (minDistance < Cell.HEX_SIZE) {
-                    cells!![nearestHexIndex].state = Cell.CellState.UNCOVERED
-                    cells!![nearestHexIndex].draw(canvas!!, paint, textPaint)
+                    cells[nearestHexIndex].state = Cell.CellState.UNCOVERED
+                    cells[nearestHexIndex].draw(canvas!!, paint, textPaint)
                 }
             }
             surfaceHolder.unlockCanvasAndPost(canvas) // открываем canvas
