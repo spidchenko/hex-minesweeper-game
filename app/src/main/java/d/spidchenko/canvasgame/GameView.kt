@@ -1,6 +1,5 @@
 package d.spidchenko.canvasgame
 
-import android.app.Application
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
@@ -10,7 +9,6 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
-import java.util.*
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
@@ -23,7 +21,7 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
     private var maxY = 0
 
     //TODO set number of cells here
-    private var cells = mutableListOf<Cell>()
+    private val cells = mutableListOf<Cell>()
     private var gameThread: Thread? = null
     private val paint: Paint = Paint().apply {
         isAntiAlias = true
@@ -64,10 +62,19 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
         Log.d(TAG, "init: numRows = $numRows")
         Log.d(TAG, "init: numColumns = $numColumns")
         fillWithHexagons()
+        //TODO set mines after first turn
+        setMines(Difficulty.MEDIUM)
     }
 
-    private fun setMines() {
-
+    private fun setMines(difficulty: Difficulty) {
+        val numberOfMines = difficulty.numberOfMines
+        val helperArray = IntArray(cells.size) { it } // 0, 1, 2, 3...
+        Log.d(TAG, "setMines: Cells - ${cells.size}. Mines - $numberOfMines")
+        // using shuffle to get n random cells
+        helperArray.shuffle()
+        for (i in 0..numberOfMines) {
+            cells[helperArray[i]].hasBomb = true
+        }
     }
 
     private fun fillWithHexagons() {
@@ -111,11 +118,11 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
                     }
                 }
                 if (minDistance < Cell.HEX_SIZE) {
-                    cells[nearestHexIndex].state = Cell.CellState.UNCOVERED
+                    cells[nearestHexIndex].state = Cell.State.UNCOVERED
                     cells[nearestHexIndex].draw(canvas!!, paint, textPaint)
                 }
             }
-            surfaceHolder.unlockCanvasAndPost(canvas) // открываем canvas
+            surfaceHolder.unlockCanvasAndPost(canvas)
         }
     }
 
@@ -130,6 +137,10 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
 
     companion object {
         private const val TAG = "GameView.LOG_TAG"
+
+        enum class Difficulty(val numberOfMines: Int) {
+            EASY(5), MEDIUM(10), HARD(20)
+        }
 
         private fun convertDpToPixel(dp: Float, context: Context?): Float {
             val resources: Resources? = context?.resources

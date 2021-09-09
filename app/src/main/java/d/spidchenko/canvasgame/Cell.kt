@@ -6,16 +6,19 @@ import android.graphics.Path
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
+import kotlin.random.Random
 
 
 class Cell internal constructor(q: Int, r: Int) {
 
-    enum class CellState {
+    enum class State {
         UNCOVERED, COVERED, FLAGGED
     }
 
-    var state: CellState = CellState.COVERED
+    var state: State = State.COVERED
     var hasBomb = false
+    //TODO replace random logic
+    var numBombsAround = Random.nextInt(1,7)
 
     val centerPoint: FloatPoint
 
@@ -31,10 +34,22 @@ class Cell internal constructor(q: Int, r: Int) {
         hexPath.close()
         canvas.drawPath(hexPath, paint)
 
-        when (state) {
-            CellState.COVERED -> drawText("\u2622", textPaint, canvas)
-            CellState.UNCOVERED -> drawText("\u2620", textPaint, canvas)
-            CellState.FLAGGED -> drawText("F", textPaint, canvas)
+        when {
+            //TODO draw covered cell
+            state == State.COVERED ->
+                drawText("?", textPaint, canvas)
+
+            //TODO game over
+            state == State.UNCOVERED && hasBomb ->
+                drawText("B", textPaint, canvas)
+
+            //TODO draw number
+            state == State.UNCOVERED && !hasBomb ->
+                drawText(numBombsAround.toString(), textPaint, canvas)
+
+            //TODO draw red flag
+            state == State.FLAGGED ->
+                drawText("F", textPaint, canvas)
         }
 
     }
