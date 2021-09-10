@@ -13,12 +13,19 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
+enum class Difficulty(val numberOfMines: Int) {
+    EASY(5), MEDIUM(10), HARD(20)
+}
+
 class GameView(context: Context?) : SurfaceView(context), Runnable {
     private var firstTime = true
     private val gameRunning = true
     private val paddingSize = 100
-    private var maxX = 0
-    private var maxY = 0
+
+    var canvasWidth: Int = 0
+    var canvasHeight: Int = 0
+    var cellWidth: Int = 0
+    var cellHeight: Int = 0
 
     //TODO set number of cells here
     private val cells = mutableListOf<Cell>()
@@ -44,6 +51,7 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
 
     private var canvas: Canvas? = null
     private val surfaceHolder: SurfaceHolder = holder
+
     override fun run() {
         while (gameRunning) {
             draw()
@@ -52,13 +60,19 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
     }
 
     private fun init() {
-        maxX = surfaceHolder.surfaceFrame.width()
-        maxY = surfaceHolder.surfaceFrame.height()
-        val horizontalSpacing = (Cell.HEX_SIZE * sqrt(3.0)).roundToInt()
-        val verticalSpacing = (1.5 * Cell.HEX_SIZE).roundToInt()
-        Cell.gameFieldCenter = FloatPoint(maxX / 2f, maxY / 2f)
-        val numRows = (maxX - 2 * paddingSize) / horizontalSpacing
-        val numColumns = (maxY - 2 * paddingSize) / verticalSpacing
+
+        canvasWidth = surfaceHolder.surfaceFrame.width()
+        canvasHeight = surfaceHolder.surfaceFrame.height()
+        canvasCenter = FloatPoint(canvasWidth / 2f, canvasHeight / 2f)
+
+
+        Log.d(TAG, "init: center = ${canvasCenter.x} ${canvasCenter.y}. Dimensions: $canvasWidth $canvasHeight")
+
+        cellWidth = (Cell.HEX_SIZE * sqrt(3.0)).roundToInt()
+        cellHeight = (1.5 * Cell.HEX_SIZE).roundToInt()
+
+        val numRows = (canvasWidth - 2 * paddingSize) / cellWidth
+        val numColumns = (canvasHeight - 2 * paddingSize) / cellHeight
         Log.d(TAG, "init: numRows = $numRows")
         Log.d(TAG, "init: numColumns = $numColumns")
         fillWithHexagons()
@@ -68,12 +82,12 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
 
     private fun setMines(difficulty: Difficulty) {
         val numberOfMines = difficulty.numberOfMines
-        val helperArray = IntArray(cells.size) { it } // 0, 1, 2, 3...
+        val indexes = IntArray(cells.size) { it } // 0, 1, 2, 3...
         Log.d(TAG, "setMines: Cells - ${cells.size}. Mines - $numberOfMines")
         // using shuffle to get n random cells
-        helperArray.shuffle()
+        indexes.shuffle()
         for (i in 0..numberOfMines) {
-            cells[helperArray[i]].hasBomb = true
+            cells[indexes[i]].hasBomb = true
         }
     }
 
@@ -82,8 +96,8 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
         for (q in -7..7) for (r in -6..6) {
             //check if visible
             val newXCord =
-                    Cell.gameFieldCenter.x + Cell.HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r)
-            if (newXCord > paddingSize && newXCord < maxX - paddingSize) {
+                    canvasCenter.x + Cell.HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r)
+            if (newXCord > paddingSize && newXCord < canvasWidth - paddingSize) {
                 cells.add(Cell(q, r))
             }
         }
@@ -118,7 +132,8 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
                     }
                 }
                 if (minDistance < Cell.HEX_SIZE) {
-                    cells[nearestHexIndex].state = Cell.State.UNCOVERED
+                    cells[nearestHexIndex].uncover()
+                    //TODO make simple - bold border
                     cells[nearestHexIndex].draw(canvas!!, paint, textPaint)
                 }
             }
@@ -137,10 +152,7 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
 
     companion object {
         private const val TAG = "GameView.LOG_TAG"
-
-        enum class Difficulty(val numberOfMines: Int) {
-            EASY(5), MEDIUM(10), HARD(20)
-        }
+        lateinit var canvasCenter: FloatPoint
 
         private fun convertDpToPixel(dp: Float, context: Context?): Float {
             val resources: Resources? = context?.resources

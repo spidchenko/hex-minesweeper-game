@@ -8,12 +8,11 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.random.Random
 
+enum class State {
+    UNCOVERED, COVERED, FLAGGED
+}
 
 class Cell internal constructor(q: Int, r: Int) {
-
-    enum class State {
-        UNCOVERED, COVERED, FLAGGED
-    }
 
     var state: State = State.COVERED
     var hasBomb = false
@@ -69,15 +68,19 @@ class Cell internal constructor(q: Int, r: Int) {
         )
     }
 
+    fun uncover() {
+        this.state = State.UNCOVERED
+    }
+
 
     companion object {
         const val HEX_SIZE = 50
-        var gameFieldCenter = FloatPoint()
+
     }
 
     init {
-        val centerX = gameFieldCenter.x + (HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r))
-        val centerY = gameFieldCenter.y + (HEX_SIZE * (3.0 / 2 * r))
+        val centerX = GameView.canvasCenter.x + (HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r))
+        val centerY = GameView.canvasCenter.y + (HEX_SIZE * (3.0 / 2 * r))
         centerPoint = FloatPoint(centerX.toFloat(), centerY.toFloat())
     }
 }
