@@ -13,9 +13,7 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-enum class Difficulty(val numberOfMines: Int) {
-    EASY(5), MEDIUM(10), HARD(20)
-}
+
 
 class GameView(context: Context?) : SurfaceView(context), Runnable {
     private var firstTime = true
@@ -77,10 +75,10 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
         Log.d(TAG, "init: numColumns = $numColumns")
         fillWithHexagons()
         //TODO set mines after first turn
-        setMines(Difficulty.MEDIUM)
+        setMines(Game.Difficulty.MEDIUM)
     }
 
-    private fun setMines(difficulty: Difficulty) {
+    private fun setMines(difficulty: Game.Difficulty) {
         val numberOfMines = difficulty.numberOfMines
         val indexes = IntArray(cells.size) { it } // 0, 1, 2, 3...
         Log.d(TAG, "setMines: Cells - ${cells.size}. Mines - $numberOfMines")

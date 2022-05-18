@@ -8,11 +8,13 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 import kotlin.random.Random
 
-enum class State {
-    UNCOVERED, COVERED, FLAGGED
-}
+
 
 class Cell internal constructor(q: Int, r: Int) {
+
+    enum class State {
+        UNCOVERED, COVERED, FLAGGED
+    }
 
     var state: State = State.COVERED
     var hasBomb = false
