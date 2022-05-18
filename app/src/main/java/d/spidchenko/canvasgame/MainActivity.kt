@@ -2,7 +2,6 @@ package d.spidchenko.canvasgame
 
 import android.graphics.Point
 import android.os.Bundle
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.LinearLayout
