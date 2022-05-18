@@ -13,20 +13,20 @@ import kotlin.math.sqrt
 
 
 class GameView(context: Context?) : SurfaceView(context), Runnable {
-    private var game = Game(this)
-    private var firstTime = true
+    private val surfaceHolder: SurfaceHolder = holder
     private val gameRunning = true
     private val paddingSize = 100
+    private var game = Game(this)
 
+    private var firstTime = true
     private var canvasWidth: Int = 0
     private var canvasHeight: Int = 0
     private var cellWidth: Int = 0
+
     private var cellHeight: Int = 0
 
     private var gameThread: Thread? = null
-
     private var canvas: Canvas? = null
-    private val surfaceHolder: SurfaceHolder = holder
 
     override fun run() {
         while (gameRunning) {
@@ -62,13 +62,12 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
         Log.d(TAG, "init: numColumns = $numColumns")
         fillWithHexagons()
         //TODO set mines after first turn
-        game.setMines(Game.Difficulty.MEDIUM)
+        game.setMines(Game.Difficulty.EASY)
     }
 
 
     private fun fillWithHexagons() {
-        //TODO replace magick numbers
-        for (q in -7..7) for (r in -6..6) {
+        for (q in -ROWS / 2..ROWS / 2) for (r in -CELLS_IN_A_ROW / 2..CELLS_IN_A_ROW / 2) {
             //check if visible
             val newXCord =
                 canvasCenter.x + Cell.HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r)
@@ -88,7 +87,7 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
             canvas = surfaceHolder.lockCanvas()
             //todo NullPointerException here! on sleep ...
             canvas?.drawColor(Color.BLACK)
-            game.drawField(canvas!!);
+            game.drawField(canvas)
 
             val tappedCellIdx = game.tapManager.getIndexOfTappedCell()
             if (tappedCellIdx != null) {
@@ -101,10 +100,9 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
     }
 
 
-
     private fun waitSomeTime() {
         try {
-            Thread.sleep(17)
+            Thread.sleep(SLEEP_MILLS)
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
@@ -113,6 +111,9 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
 
     companion object {
         private const val TAG = "GameView.LOG_TAG"
+        private const val CELLS_IN_A_ROW = 11
+        private const val ROWS = 13
+        private const val SLEEP_MILLS = 17L
         lateinit var canvasCenter: FloatPoint
     }
 

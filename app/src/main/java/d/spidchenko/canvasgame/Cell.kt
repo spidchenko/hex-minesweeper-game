@@ -3,10 +3,9 @@ package d.spidchenko.canvasgame
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
-import kotlin.random.Random
 
 
-class Cell internal constructor(q: Int, r: Int) {
+class Cell internal constructor(val q: Int, val r: Int) {
 
     enum class State {
         UNCOVERED, COVERED, FLAGGED
@@ -15,8 +14,7 @@ class Cell internal constructor(q: Int, r: Int) {
     var state: State = State.COVERED
     var hasBomb = false
 
-    //TODO replace random logic
-    var numBombsAround = Random.nextInt(1, 7)
+    var numBombsAround: Long = 0
 
     val centerPoint: FloatPoint
 

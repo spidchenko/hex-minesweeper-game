@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.util.Log
+import kotlin.math.abs
 
 class Game(gameView: GameView) {
     enum class Difficulty(val numberOfMines: Int) {
@@ -34,14 +35,16 @@ class Game(gameView: GameView) {
         textAlign = Paint.Align.CENTER
     }
 
-    fun drawField(canvas: Canvas) {
-        for (hexagon in cells) {
-            drawSimpleCell(canvas, hexagon)
+    fun drawField(canvas: Canvas?) {
+        if (canvas != null) {
+            for (hexagon in cells) {
+                drawSimpleCell(canvas, hexagon)
+            }
         }
     }
 
     fun drawActiveCell(canvas: Canvas, cell: Cell) {
-        drawBoldCell(canvas, cell);
+        drawBoldCell(canvas, cell)
     }
 
     private fun drawCellState(canvas: Canvas, cell: Cell) {
@@ -54,11 +57,13 @@ class Game(gameView: GameView) {
             cell.state == Cell.State.UNCOVERED && cell.hasBomb ->
                 drawText(cell, "B", textPaint, canvas)
 
-            //TODO draw number
+            //TODO open cells with no bombs around
             cell.state == Cell.State.UNCOVERED && !cell.hasBomb ->
-                drawText(cell, cell.numBombsAround.toString(), textPaint, canvas)
+                if (cell.numBombsAround > 0){
+                    drawText(cell, cell.numBombsAround.toString(), textPaint, canvas)
+                }
 
-            //TODO draw red flag
+            //TODO draw red flag. On long tap?
             cell.state == Cell.State.FLAGGED ->
                 drawText(cell, "F", textPaint, canvas)
         }
@@ -102,6 +107,29 @@ class Game(gameView: GameView) {
         for (i in 0..numberOfMines) {
             cells[indexes[i]].hasBomb = true
         }
+        calcNumberOfNearestBombs()
+    }
+
+    private fun calcNumberOfNearestBombs() {
+        for (cell in cells) {
+            val numberOfNearestBombs = getNeighbours(cell).stream().filter(Cell::hasBomb).count()
+            cell.numBombsAround = numberOfNearestBombs
+        }
+    }
+
+    private fun getNeighbours(cell: Cell): List<Cell> {
+        val neighbours = mutableListOf<Cell>()
+        // TODO use streams API here
+        for (c in cells) {
+            // TODO how to simplify this condition? MB with x;y;z coordinates
+            if ((abs(cell.q - c.q) == 1 && cell.r == c.r) ||
+                (abs(cell.q - c.q) == 1 && abs(cell.r - c.r) == 1 && (cell.q - c.q + (cell.r - c.r)) == 0) ||
+                (abs(cell.r - c.r) == 1 && cell.q == c.q)
+            ) {
+                neighbours.add(c)
+            }
+        }
+        return neighbours
     }
 
     companion object {
