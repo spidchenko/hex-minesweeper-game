@@ -104,7 +104,7 @@ class Game(gameView: GameView) {
         Log.d(TAG, "setMines: Cells - ${cells.size}. Mines - $numberOfMines")
         // using shuffle to get n random cells
         indexes.shuffle()
-        for (i in 0..numberOfMines) {
+        for (i in 0 until numberOfMines) {
             cells[indexes[i]].hasBomb = true
         }
         calcNumberOfNearestBombs()
