@@ -40,4 +40,12 @@ class Cell internal constructor(val q: Int, val r: Int) {
         val centerY = GameView.canvasCenter.y + (HEX_SIZE * (3.0 / 2 * r))
         centerPoint = FloatPoint(centerX, centerY)
     }
+
+    companion object {
+        const val ICON_COVERED = "⚫";
+        const val ICON_BOMB = "\uD83E\uDDE8";
+        const val ICON_FLAG = "\uD83D\uDEA9";
+        const val HEX_SIZE = 50
+        private const val TAG = "Cell.LOG_TAG"
+    }
 }
