@@ -1,5 +1,6 @@
 package d.spidchenko.canvasgame
 
+import android.util.Log
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -30,9 +31,9 @@ class Cell internal constructor(val q: Int, val r: Int) {
         this.state = State.UNCOVERED
     }
 
-    companion object {
-        const val HEX_SIZE = 50
-
+    fun flag() {
+        this.state = State.FLAGGED
+        Log.d(TAG, "flag: Setting Flag q=${this.q} r=${this.r}")
     }
 
     init {

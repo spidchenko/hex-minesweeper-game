@@ -2,12 +2,14 @@ package d.spidchenko.canvasgame
 
 import kotlin.math.hypot
 
+enum class ClickDuration { SHORT, LONG }
+
 class TapManager(private val game: Game) {
 
     fun getIndexOfTappedCell(): Int? {
-        if (MainActivity.tapPosition != null) {
-            val tap = MainActivity.tapPosition
-            var nearestHexIndex: Int? = null;
+        if (MainActivity.lastClickCoordinates != null) {
+            val tap = MainActivity.lastClickCoordinates
+            var nearestHexIndex: Int? = null
             var minDistance = Double.MAX_VALUE
             for (i in game.cells.indices) {
                 val distance = hypot(
@@ -19,13 +21,17 @@ class TapManager(private val game: Game) {
                     nearestHexIndex = i
                 }
             }
+            MainActivity.lastClickCoordinates = null
             return if (minDistance < Cell.HEX_SIZE) {
-                nearestHexIndex;
+                nearestHexIndex
             } else {
-                null;
+                null
             }
         }
         return null
     }
 
+    companion object {
+        private const val TAG = "TapManager"
+    }
 }

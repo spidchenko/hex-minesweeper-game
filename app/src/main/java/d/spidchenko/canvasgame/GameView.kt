@@ -91,8 +91,14 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
 
             val tappedCellIdx = game.tapManager.getIndexOfTappedCell()
             if (tappedCellIdx != null) {
-                game.cells[tappedCellIdx].uncover()
-                game.drawActiveCell(canvas!!, game.cells[tappedCellIdx])
+                if(MainActivity.clickDuration == ClickDuration.LONG){
+                    game.cells[tappedCellIdx].flag()
+                    game.drawActiveCell(canvas!!, game.cells[tappedCellIdx])
+                } else{
+                    game.cells[tappedCellIdx].uncover()
+                    game.drawActiveCell(canvas!!, game.cells[tappedCellIdx])
+                }
+
             }
 
             surfaceHolder.unlockCanvasAndPost(canvas)
