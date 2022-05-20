@@ -87,7 +87,6 @@ class Game(gameView: GameView) {
 
     private fun drawCellState(canvas: Canvas, cell: Cell) {
         when {
-            //TODO draw covered cell
             cell.state == Cell.State.COVERED ->
                 drawText(cell, Cell.ICON_COVERED, textPaint, canvas)
 
@@ -96,13 +95,11 @@ class Game(gameView: GameView) {
                 setGameIsOver()
             }
 
-            //TODO open cells with no bombs around
             cell.state == Cell.State.UNCOVERED && !cell.hasBomb ->
                 if (cell.numBombsAround > 0) {
                     drawText(cell, cell.numBombsAround.toString(), textPaint, canvas)
                 }
 
-            //TODO draw red flag. On long tap?
             cell.state == Cell.State.FLAGGED -> {
                 drawText(cell, Cell.ICON_FLAG, textPaint, canvas)
                 checkWinState()
