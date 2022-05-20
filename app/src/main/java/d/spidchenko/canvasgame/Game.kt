@@ -12,7 +12,9 @@ class Game(gameView: GameView) {
         EASY(5), MEDIUM(10), HARD(20)
     }
 
+    var isRunning = true
     val cells = mutableListOf<Cell>()
+    private val cellsWithBombs = mutableListOf<Cell>()
     private val tapManager: TapManager = TapManager(this)
     private var activeCell: Cell? = null
 
@@ -46,6 +48,36 @@ class Game(gameView: GameView) {
         }
     }
 
+    fun setMines(difficulty: Difficulty) {
+        val numberOfMines = difficulty.numberOfMines
+        val indexes = IntArray(cells.size) { it } // 0, 1, 2, 3...
+        Log.d(TAG, "setMines: Cells - ${cells.size}. Mines - $numberOfMines")
+        // using shuffle to get n random cells
+        indexes.shuffle()
+        for (i in 0 until numberOfMines) {
+            cells[indexes[i]].hasBomb = true
+            cellsWithBombs.add(cells[indexes[i]])
+        }
+        calcNumberOfNearestBombs()
+    }
+
+    fun handleClicks() {
+        val tappedCellIdx = tapManager.getIndexOfTappedCell()
+        if (tappedCellIdx != null) {
+            val tappedCell = cells[tappedCellIdx]
+            activeCell = tappedCell
+            if (MainActivity.clickDuration == ClickDuration.LONG) {
+                tappedCell.flag()
+            } else {
+                if (tappedCell.numBombsAround == 0L && !tappedCell.hasBomb) {
+                    uncoverSafeNeighbourCells(tappedCell)
+                } else {
+                    tappedCell.uncover()
+                }
+            }
+        }
+    }
+
     private fun drawActiveCell(canvas: Canvas) {
         activeCell?.let {
             drawBoldCell(canvas, it)
@@ -59,9 +91,10 @@ class Game(gameView: GameView) {
             cell.state == Cell.State.COVERED ->
                 drawText(cell, Cell.ICON_COVERED, textPaint, canvas)
 
-            //TODO game over
-            cell.state == Cell.State.UNCOVERED && cell.hasBomb ->
+            cell.state == Cell.State.UNCOVERED && cell.hasBomb -> {
                 drawText(cell, Cell.ICON_BOMB, textPaint, canvas)
+                setGameIsOver()
+            }
 
             //TODO open cells with no bombs around
             cell.state == Cell.State.UNCOVERED && !cell.hasBomb ->
@@ -70,8 +103,10 @@ class Game(gameView: GameView) {
                 }
 
             //TODO draw red flag. On long tap?
-            cell.state == Cell.State.FLAGGED ->
+            cell.state == Cell.State.FLAGGED -> {
                 drawText(cell, Cell.ICON_FLAG, textPaint, canvas)
+                checkWinState()
+            }
         }
     }
 
@@ -101,19 +136,6 @@ class Game(gameView: GameView) {
             cell.centerPoint.floatY - dyForTextAlign,
             textPaint
         )
-
-    }
-
-    fun setMines(difficulty: Difficulty) {
-        val numberOfMines = difficulty.numberOfMines
-        val indexes = IntArray(cells.size) { it } // 0, 1, 2, 3...
-        Log.d(TAG, "setMines: Cells - ${cells.size}. Mines - $numberOfMines")
-        // using shuffle to get n random cells
-        indexes.shuffle()
-        for (i in 0 until numberOfMines) {
-            cells[indexes[i]].hasBomb = true
-        }
-        calcNumberOfNearestBombs()
     }
 
     private fun calcNumberOfNearestBombs() {
@@ -138,19 +160,33 @@ class Game(gameView: GameView) {
         return neighbours
     }
 
-    fun handleClicks() {
-        val tappedCellIdx = tapManager.getIndexOfTappedCell()
-        if (tappedCellIdx != null) {
-            activeCell = cells[tappedCellIdx]
-            if (MainActivity.clickDuration == ClickDuration.LONG) {
-                cells[tappedCellIdx].flag()
-//                drawActiveCell(canvas!!, game.cells[tappedCellIdx])
-            } else {
-                cells[tappedCellIdx].uncover()
-//                drawActiveCell(canvas!!, game.cells[tappedCellIdx])
+    private fun uncoverSafeNeighbourCells(cell: Cell) {
+        for (c in getNeighbours(cell)) {
+            if (c.state == Cell.State.COVERED) {
+                c.uncover()
+                if (c.numBombsAround == 0L) {
+                    uncoverSafeNeighbourCells(c)
+                }
             }
-
         }
+    }
+
+    private fun checkWinState() {
+        Log.d(TAG, "checkWinState: total bombs - ${cellsWithBombs.size}")
+        if (cellsWithBombs.size > 0) {
+            val totalBombsFound =
+                cellsWithBombs.stream().filter { cell -> cell.state == Cell.State.FLAGGED }.count()
+            Log.d(TAG, "checkWinState: flagged bombs - $totalBombsFound")
+            if (totalBombsFound.toInt() == cellsWithBombs.size) {
+                isRunning = false
+                Log.d(TAG, "YOU WON")
+            }
+        }
+    }
+
+    private fun setGameIsOver() {
+        isRunning = false
+        Log.d(TAG, "drawCellState: GAME OVER")
     }
 
     companion object {

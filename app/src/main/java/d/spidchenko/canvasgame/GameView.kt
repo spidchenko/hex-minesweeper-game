@@ -13,23 +13,22 @@ import kotlin.math.sqrt
 
 class GameView(context: Context?) : SurfaceView(context), Runnable {
     private val surfaceHolder: SurfaceHolder = holder
-    private val gameRunning = true
     private val paddingSize = 100
-    private var game = Game(this)
 
+    private var game = Game(this)
     private var firstTime = true
     private var canvasWidth: Int = 0
     private var canvasHeight: Int = 0
     private var cellWidth: Int = 0
-
     private var cellHeight: Int = 0
-
     private var gameThread: Thread? = null
     private var canvas: Canvas? = null
 
     override fun run() {
-        while (gameRunning) {
+        while (game.isRunning) {
+            // TODO add pause game logic
             draw()
+            game.handleClicks()
             waitSomeTime()
         }
     }
@@ -41,11 +40,9 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
     }
 
     private fun init() {
-
         canvasWidth = surfaceHolder.surfaceFrame.width()
         canvasHeight = surfaceHolder.surfaceFrame.height()
         canvasCenter = FloatPoint(canvasWidth / 2.0, canvasHeight / 2.0)
-
 
         Log.d(
             TAG,
@@ -64,7 +61,6 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
         game.setMines(Game.Difficulty.EASY)
     }
 
-
     private fun fillWithHexagons() {
         for (q in -ROWS / 2..ROWS / 2) for (r in -CELLS_IN_A_ROW / 2..CELLS_IN_A_ROW / 2) {
             //check if visible
@@ -76,7 +72,6 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
         }
     }
 
-
     private fun draw() {
         if (surfaceHolder.surface.isValid) {
             if (firstTime) {
@@ -85,11 +80,9 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
             }
             canvas = surfaceHolder.lockCanvas()
             game.drawField(canvas)
-            game.handleClicks()
             surfaceHolder.unlockCanvasAndPost(canvas)
         }
     }
-
 
     private fun waitSomeTime() {
         try {
@@ -98,7 +91,6 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
             e.printStackTrace()
         }
     }
-
 
     companion object {
         private const val TAG = "GameView.LOG_TAG"
