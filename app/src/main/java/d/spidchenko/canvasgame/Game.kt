@@ -13,7 +13,8 @@ class Game(gameView: GameView) {
     }
 
     val cells = mutableListOf<Cell>()
-    val tapManager: TapManager = TapManager(this)
+    private val tapManager: TapManager = TapManager(this)
+    private var activeCell: Cell? = null
 
     private val boldPaint: Paint = Paint().apply {
         isAntiAlias = true
@@ -37,14 +38,19 @@ class Game(gameView: GameView) {
 
     fun drawField(canvas: Canvas?) {
         if (canvas != null) {
+            canvas.drawColor(Color.BLACK)
             for (hexagon in cells) {
                 drawSimpleCell(canvas, hexagon)
             }
+            drawActiveCell(canvas)
         }
     }
 
-    fun drawActiveCell(canvas: Canvas, cell: Cell) {
-        drawBoldCell(canvas, cell)
+    private fun drawActiveCell(canvas: Canvas) {
+        activeCell?.let {
+            drawBoldCell(canvas, it)
+            activeCell = null
+        }
     }
 
     private fun drawCellState(canvas: Canvas, cell: Cell) {
@@ -130,6 +136,21 @@ class Game(gameView: GameView) {
             }
         }
         return neighbours
+    }
+
+    fun handleClicks() {
+        val tappedCellIdx = tapManager.getIndexOfTappedCell()
+        if (tappedCellIdx != null) {
+            activeCell = cells[tappedCellIdx]
+            if (MainActivity.clickDuration == ClickDuration.LONG) {
+                cells[tappedCellIdx].flag()
+//                drawActiveCell(canvas!!, game.cells[tappedCellIdx])
+            } else {
+                cells[tappedCellIdx].uncover()
+//                drawActiveCell(canvas!!, game.cells[tappedCellIdx])
+            }
+
+        }
     }
 
     companion object {

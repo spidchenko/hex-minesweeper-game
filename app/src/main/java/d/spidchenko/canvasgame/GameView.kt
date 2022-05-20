@@ -3,7 +3,6 @@ package d.spidchenko.canvasgame
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
-import android.graphics.Color
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.SurfaceHolder
@@ -85,22 +84,8 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
                 firstTime = false
             }
             canvas = surfaceHolder.lockCanvas()
-            //todo NullPointerException here! on sleep ...
-            canvas?.drawColor(Color.BLACK)
             game.drawField(canvas)
-
-            val tappedCellIdx = game.tapManager.getIndexOfTappedCell()
-            if (tappedCellIdx != null) {
-                if(MainActivity.clickDuration == ClickDuration.LONG){
-                    game.cells[tappedCellIdx].flag()
-                    game.drawActiveCell(canvas!!, game.cells[tappedCellIdx])
-                } else{
-                    game.cells[tappedCellIdx].uncover()
-                    game.drawActiveCell(canvas!!, game.cells[tappedCellIdx])
-                }
-
-            }
-
+            game.handleClicks()
             surfaceHolder.unlockCanvasAndPost(canvas)
         }
     }
