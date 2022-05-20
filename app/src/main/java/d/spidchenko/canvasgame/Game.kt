@@ -176,12 +176,14 @@ class Game(gameView: GameView) {
             Log.d(TAG, "checkWinState: flagged bombs - $totalBombsFound")
             if (totalBombsFound.toInt() == cellsWithBombs.size) {
                 isRunning = false
+                // TODO happy music here
                 Log.d(TAG, "YOU WON")
             }
         }
     }
 
     private fun setGameIsOver() {
+        // TODO boom sound here. Vibration would be great too
         isRunning = false
         Log.d(TAG, "drawCellState: GAME OVER")
     }

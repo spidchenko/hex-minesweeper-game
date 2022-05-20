@@ -27,6 +27,7 @@ class Cell internal constructor(val q: Int, val r: Int) {
     }
 
     fun uncover() {
+        // TODO need sound here
         state = when (state) {
             State.COVERED -> State.UNCOVERED
             else -> state // Do nothing
@@ -34,6 +35,7 @@ class Cell internal constructor(val q: Int, val r: Int) {
     }
 
     fun flag() {
+        // TODO need some sound here too
         state = when (state) {
             State.COVERED -> State.FLAGGED
             State.FLAGGED -> State.COVERED
