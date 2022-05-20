@@ -1,6 +1,5 @@
 package d.spidchenko.canvasgame
 
-import android.util.Log
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -28,12 +27,18 @@ class Cell internal constructor(val q: Int, val r: Int) {
     }
 
     fun uncover() {
-        this.state = State.UNCOVERED
+        state = when (state) {
+            State.COVERED -> State.UNCOVERED
+            else -> state // Do nothing
+        }
     }
 
     fun flag() {
-        this.state = State.FLAGGED
-        Log.d(TAG, "flag: Setting Flag q=${this.q} r=${this.r}")
+        state = when (state) {
+            State.COVERED -> State.FLAGGED
+            State.FLAGGED -> State.COVERED
+            else -> state // Do nothing
+        }
     }
 
     init {
@@ -43,9 +48,9 @@ class Cell internal constructor(val q: Int, val r: Int) {
     }
 
     companion object {
-        const val ICON_COVERED = "⚫";
-        const val ICON_BOMB = "\uD83E\uDDE8";
-        const val ICON_FLAG = "\uD83D\uDEA9";
+        const val ICON_COVERED = "⚫"
+        const val ICON_BOMB = "\uD83E\uDDE8"
+        const val ICON_FLAG = "\uD83D\uDEA9"
         const val HEX_SIZE = 50
         private const val TAG = "Cell.LOG_TAG"
     }
