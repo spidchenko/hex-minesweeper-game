@@ -65,14 +65,15 @@ class Game(gameView: GameView) {
         val tappedCellIdx = tapManager.getIndexOfTappedCell()
         if (tappedCellIdx != null) {
             val tappedCell = cells[tappedCellIdx]
+            Log.d(TAG, "handleClicks: Tapped Cell: $tappedCell")
             activeCell = tappedCell
-            if (MainActivity.clickDuration == ClickDuration.LONG) {
-                tappedCell.flag()
-            } else {
-                if (tappedCell.numBombsAround == 0L && !tappedCell.hasBomb) {
-                    uncoverSafeNeighbourCells(tappedCell)
-                } else {
+            when (MainActivity.clickDuration) {
+                ClickDuration.LONG -> tappedCell.flag()
+                ClickDuration.SHORT -> {
                     tappedCell.uncover()
+                    if (tappedCell.numBombsAround == 0L && !tappedCell.hasBomb) {
+                        uncoverSafeNeighbourCells(tappedCell)
+                    }
                 }
             }
         }
@@ -169,11 +170,9 @@ class Game(gameView: GameView) {
     }
 
     private fun checkWinState() {
-        Log.d(TAG, "checkWinState: total bombs - ${cellsWithBombs.size}")
         if (cellsWithBombs.size > 0) {
             val totalBombsFound =
                 cellsWithBombs.stream().filter { cell -> cell.state == Cell.State.FLAGGED }.count()
-            Log.d(TAG, "checkWinState: flagged bombs - $totalBombsFound")
             if (totalBombsFound.toInt() == cellsWithBombs.size) {
                 isRunning = false
                 // TODO happy music here
