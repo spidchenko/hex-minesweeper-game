@@ -34,6 +34,10 @@ class Cell internal constructor(val q: Int, val r: Int) {
         }
     }
 
+    override fun toString(): String {
+        return "r=$r q=$q bombs_around=$numBombsAround has_bomb=$hasBomb"
+    }
+
     fun flag() {
         // TODO need some sound here too
         state = when (state) {
