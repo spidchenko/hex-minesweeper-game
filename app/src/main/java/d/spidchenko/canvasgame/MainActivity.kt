@@ -1,16 +1,18 @@
 package d.spidchenko.canvasgame
 
+import android.app.Activity
 import android.graphics.Point
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
+import android.view.Window
 import android.widget.LinearLayout
-import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : AppCompatActivity(), View.OnTouchListener, View.OnClickListener,
+class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener,
     View.OnLongClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
         val gameView = GameView(this)
         val gameLayout: LinearLayout = findViewById(R.id.gameLayout)
