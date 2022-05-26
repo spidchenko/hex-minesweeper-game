@@ -47,15 +47,11 @@ class Game(gameView: GameView) {
     }
 
     fun setMines(difficulty: Difficulty) {
-        val numberOfMines = difficulty.numberOfMines
-        val indexes = IntArray(cells.size) { it } // 0, 1, 2, 3...
-        Log.d(TAG, "setMines: Cells - ${cells.size}. Mines - $numberOfMines")
-        // using shuffle to get n random cells
-        indexes.shuffle()
-        for (i in 0 until numberOfMines) {
-            cells[indexes[i]].hasBomb = true
-            cellsWithBombs.add(cells[indexes[i]])
-        }
+        val numberOfMinesToSet = difficulty.numberOfMines
+        Log.d(TAG, "setMines: Cells - ${cells.size}. Mines - $numberOfMinesToSet")
+        val randomCells = getNRandomCells(numberOfMinesToSet)
+        cellsWithBombs.addAll(randomCells)
+        cellsWithBombs.forEach { cell -> cell.hasBomb = true }
         calcNumberOfNearestBombs()
     }
 
@@ -75,6 +71,16 @@ class Game(gameView: GameView) {
                 }
             }
         }
+    }
+
+    private fun getNRandomCells(n: Int): List<Cell> {
+        val indexes = IntArray(cells.size) { it } // 0, 1, 2, 3...
+        val nRandomCells = mutableListOf<Cell>()
+        indexes.shuffle()
+        for (i in 0 until n) {
+            nRandomCells.add(cells[indexes[i]])
+        }
+        return nRandomCells
     }
 
     private fun drawActiveCell(canvas: Canvas) {
@@ -136,7 +142,7 @@ class Game(gameView: GameView) {
 
     private fun calcNumberOfNearestBombs() {
         for (cell in cells) {
-            val numberOfNearestBombs = getNeighbours(cell).stream().filter(Cell::hasBomb).count()
+            val numberOfNearestBombs = getNeighbours(cell).count(Cell::hasBomb)
             cell.numBombsAround = numberOfNearestBombs
         }
     }
