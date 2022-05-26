@@ -71,7 +71,7 @@ class Game(gameView: GameView) {
                 ClickDuration.LONG -> tappedCell.flag()
                 ClickDuration.SHORT -> {
                     tappedCell.uncover()
-                    if (tappedCell.numBombsAround == 0L && !tappedCell.hasBomb) {
+                    if (tappedCell.numBombsAround == 0 && !tappedCell.hasBomb) {
                         uncoverSafeNeighbourCells(tappedCell)
                     }
                 }
@@ -162,7 +162,7 @@ class Game(gameView: GameView) {
         for (c in getNeighbours(cell)) {
             if (c.state == Cell.State.COVERED) {
                 c.uncover()
-                if (c.numBombsAround == 0L) {
+                if (c.numBombsAround == 0) {
                     uncoverSafeNeighbourCells(c)
                 }
             }

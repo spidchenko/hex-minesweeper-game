@@ -15,9 +15,7 @@ class Cell internal constructor(val q: Byte, val r: Byte) {
 
     var state: State = State.COVERED
     var hasBomb = false
-
-    var numBombsAround: Long = 0
-
+    var numBombsAround: Int = 0
     val centerPoint: FloatPoint
 
     fun getNthHexCorner(n: Int, center: FloatPoint = centerPoint): FloatPoint {
