@@ -112,10 +112,10 @@ class Game(gameView: GameView) {
         val hexPath = Path()
         hexPath.incReserve(6)
         val firstPointInHexagon = cell.getNthHexCorner(0)
-        hexPath.moveTo(firstPointInHexagon.floatX, firstPointInHexagon.floatY)
+        hexPath.moveTo(firstPointInHexagon.x, firstPointInHexagon.y)
         for (n in 1..5) {
             val nThPoint = cell.getNthHexCorner(n)
-            hexPath.lineTo(nThPoint.floatX, nThPoint.floatY)
+            hexPath.lineTo(nThPoint.x, nThPoint.y)
         }
         hexPath.close()
         canvas.drawPath(hexPath, paint)
@@ -130,8 +130,8 @@ class Game(gameView: GameView) {
         val dyForTextAlign = (textPaint.descent() + textPaint.ascent()) / 2
         canvas.drawText(
             text,
-            cell.centerPoint.floatX,
-            cell.centerPoint.floatY - dyForTextAlign,
+            cell.centerPoint.x,
+            cell.centerPoint.y - dyForTextAlign,
             textPaint
         )
     }

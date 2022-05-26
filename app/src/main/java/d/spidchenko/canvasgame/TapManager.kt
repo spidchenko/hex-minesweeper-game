@@ -12,7 +12,7 @@ class TapManager(private val game: Game) {
         if (tap != null) {
             Log.d(TAG, "getIndexOfTappedCell: x=${tap.x} y=${tap.y} ${MainActivity.clickDuration}")
             var nearestHexIndex: Int? = null
-            var minDistance = Double.MAX_VALUE
+            var minDistance = Float.MAX_VALUE
             for (i in game.cells.indices) {
                 val distance = hypot(
                     (game.cells[i].centerPoint.x - tap.x),

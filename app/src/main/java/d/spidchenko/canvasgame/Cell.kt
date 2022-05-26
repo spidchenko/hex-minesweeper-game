@@ -7,10 +7,7 @@ import kotlin.math.sqrt
 
 class Cell internal constructor(val q: Byte, val r: Byte) {
 
-    class FloatPoint(val x: Double = 0.0, val y: Double = 0.0) {
-        val floatX = x.toFloat()
-        val floatY = y.toFloat()
-    }
+    class FloatPoint(val x: Float = 0.0f, val y: Float = 0.0f)
 
     enum class State {
         UNCOVERED, COVERED, FLAGGED
@@ -26,9 +23,9 @@ class Cell internal constructor(val q: Byte, val r: Byte) {
     fun getNthHexCorner(n: Int, center: FloatPoint = centerPoint): FloatPoint {
         val angleDeg = 60.0 * n - 30.0
         val angleRad = Math.PI / 180 * angleDeg
-        return FloatPoint(
-            center.x + HEX_SIZE * cos(angleRad), center.y + HEX_SIZE * sin(angleRad)
-        )
+        val x = center.x + HEX_SIZE * cos(angleRad)
+        val y = center.y + HEX_SIZE * sin(angleRad)
+        return FloatPoint(x.toFloat(), y.toFloat())
     }
 
     fun uncover() {
@@ -55,7 +52,7 @@ class Cell internal constructor(val q: Byte, val r: Byte) {
     init {
         val centerX = GameView.canvasCenter.x + (HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r))
         val centerY = GameView.canvasCenter.y + (HEX_SIZE * (3.0 / 2 * r))
-        centerPoint = FloatPoint(centerX, centerY)
+        centerPoint = FloatPoint(centerX.toFloat(), centerY.toFloat())
     }
 
     companion object {
