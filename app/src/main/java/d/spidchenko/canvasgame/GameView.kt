@@ -3,6 +3,7 @@ package d.spidchenko.canvasgame
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
+import android.graphics.Point
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.SurfaceHolder
@@ -42,7 +43,7 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
     private fun init() {
         canvasWidth = surfaceHolder.surfaceFrame.width()
         canvasHeight = surfaceHolder.surfaceFrame.height()
-        canvasCenter = FloatPoint(canvasWidth / 2.0, canvasHeight / 2.0)
+        canvasCenter = Point(canvasWidth / 2, canvasHeight / 2)
 
         Log.d(
             TAG,
@@ -67,7 +68,7 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
             val newXCord =
                 canvasCenter.x + Cell.HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r)
             if (newXCord > paddingSize && newXCord < canvasWidth - paddingSize) {
-                game.cells.add(Cell(q, r))
+                game.cells.add(Cell(q.toByte(), r.toByte()))
             }
         }
     }
@@ -97,7 +98,7 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
         private const val CELLS_IN_A_ROW = 11
         private const val ROWS = 13
         private const val SLEEP_MILLS = 17L
-        lateinit var canvasCenter: FloatPoint
+        lateinit var canvasCenter: Point
     }
 
     init {

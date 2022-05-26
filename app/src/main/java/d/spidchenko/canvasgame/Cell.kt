@@ -5,7 +5,12 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 
-class Cell internal constructor(val q: Int, val r: Int) {
+class Cell internal constructor(val q: Byte, val r: Byte) {
+
+    class FloatPoint(val x: Double = 0.0, val y: Double = 0.0) {
+        val floatX = x.toFloat()
+        val floatY = y.toFloat()
+    }
 
     enum class State {
         UNCOVERED, COVERED, FLAGGED
