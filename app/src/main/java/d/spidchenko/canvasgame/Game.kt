@@ -41,9 +41,7 @@ class Game(gameView: GameView) {
     fun drawField(canvas: Canvas?) {
         if (canvas != null) {
             canvas.drawColor(Color.BLACK)
-            for (hexagon in cells) {
-                drawSimpleCell(canvas, hexagon)
-            }
+            cells.forEach { cell -> drawSimpleCell(canvas, cell) }
             drawActiveCell(canvas)
         }
     }
@@ -145,7 +143,6 @@ class Game(gameView: GameView) {
 
     private fun getNeighbours(cell: Cell): List<Cell> {
         val neighbours = mutableListOf<Cell>()
-        // TODO use streams API here
         for (c in cells) {
             // TODO how to simplify this condition? MB with x;y;z coordinates
             if ((abs(cell.q - c.q) == 1 && cell.r == c.r) ||
@@ -171,9 +168,8 @@ class Game(gameView: GameView) {
 
     private fun checkWinState() {
         if (cellsWithBombs.size > 0) {
-            val totalBombsFound =
-                cellsWithBombs.stream().filter { cell -> cell.state == Cell.State.FLAGGED }.count()
-            if (totalBombsFound.toInt() == cellsWithBombs.size) {
+            val totalBombsFound = cellsWithBombs.count(Cell::isFlagged)
+            if (totalBombsFound == cellsWithBombs.size) {
                 isRunning = false
                 // TODO happy music here
                 Log.d(TAG, "YOU WON")

@@ -47,6 +47,10 @@ class Cell internal constructor(val q: Byte, val r: Byte) {
         }
     }
 
+    fun isFlagged(): Boolean {
+        return state == State.FLAGGED
+    }
+
     init {
         val centerX = GameView.canvasCenter.x + (HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r))
         val centerY = GameView.canvasCenter.y + (HEX_SIZE * (3.0 / 2 * r))
