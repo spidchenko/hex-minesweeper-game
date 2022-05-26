@@ -59,7 +59,7 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
         Log.d(TAG, "init: numColumns = $numColumns")
         fillWithHexagons()
         //TODO set mines after first turn
-        game.setMines(Game.Difficulty.EASY)
+        game.setMines(Game.Difficulty.HARD)
     }
 
     private fun fillWithHexagons() {
