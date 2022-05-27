@@ -43,6 +43,7 @@ class Game(gameView: GameView) {
             canvas.drawColor(Color.BLACK)
             cells.forEach { cell -> drawSimpleCell(canvas, cell) }
             drawActiveCell(canvas)
+            graduallyChangeGridColor()
         }
     }
 
@@ -74,7 +75,7 @@ class Game(gameView: GameView) {
     }
 
     private fun getNRandomCells(n: Int): List<Cell> {
-        val indexes = IntArray(cells.size) { it } // 0, 1, 2, 3...
+        val indexes = IntArray(cells.size) { it }.toMutableList() // 0, 1, 2, 3...
         val nRandomCells = mutableListOf<Cell>()
         indexes.shuffle()
         for (i in 0 until n) {
@@ -124,6 +125,16 @@ class Game(gameView: GameView) {
         hexPath.close()
         canvas.drawPath(hexPath, paint)
         drawCellState(canvas, cell)
+    }
+
+    private fun graduallyChangeGridColor() {
+        val hsvColorValue = FloatArray(3)
+        Color.colorToHSV(thinPaint.color, hsvColorValue)
+        hsvColorValue[HUE_COMPONENT] += 0.5F
+        if (hsvColorValue[HUE_COMPONENT] > 360) {
+            hsvColorValue[HUE_COMPONENT] = 0.0F
+        }
+        thinPaint.color = Color.HSVToColor(hsvColorValue)
     }
 
     private fun drawBoldCell(canvas: Canvas, cell: Cell) {
@@ -191,5 +202,6 @@ class Game(gameView: GameView) {
 
     companion object {
         private const val TAG = "Game.LOG_TAG"
+        private const val HUE_COMPONENT = 0
     }
 }
