@@ -3,7 +3,6 @@ package d.spidchenko.canvasgame
 import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
-import android.graphics.Point
 import android.graphics.PointF
 import android.util.DisplayMetrics
 import android.util.Log
@@ -13,11 +12,12 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 
-class GameView(context: Context?) : SurfaceView(context), Runnable {
+class GameView(context: Context) : SurfaceView(context), Runnable {
     private val surfaceHolder: SurfaceHolder = holder
     private val paddingSize = 100
 
-    private var game = Game(this)
+    private val soundEngine = SoundEngine(context)
+    private var game = Game(this, soundEngine)
     private var firstTime = true
     private var canvasWidth: Int = 0
     private var canvasHeight: Int = 0

@@ -7,6 +7,7 @@ import android.media.SoundPool
 class SoundEngine(context: Context) {
     private val soundPool: SoundPool
     private val explosionId: Int
+    private val popId: Int
 
     init {
         val audioAttributes = AudioAttributes.Builder()
@@ -19,16 +20,22 @@ class SoundEngine(context: Context) {
             .build()
 
         val assetManager = context.assets
-        val descriptor = assetManager.openFd("explosion.ogg")
+        var descriptor = assetManager.openFd("explosion.ogg")
         explosionId = soundPool.load(descriptor, 0)
+        descriptor = assetManager.openFd("bubble-pop.ogg")
+        popId = soundPool.load(descriptor, 0)
     }
 
-    fun playExplosion() {
+    fun playExplosion() = playSoundById(explosionId)
+
+    fun playPop() = playSoundById(popId)
+
+    private fun playSoundById(soundId: Int) {
         val leftVolume = 1F
         val rightVolume = 1F
         val priority = 0
         val loopMode = 0
         val rate = 1F
-        soundPool.play(explosionId, leftVolume, rightVolume, priority, loopMode, rate)
+        soundPool.play(soundId, leftVolume, rightVolume, priority, loopMode, rate)
     }
 }

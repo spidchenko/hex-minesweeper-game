@@ -7,7 +7,10 @@ import android.graphics.Path
 import android.util.Log
 import kotlin.math.abs
 
-class Game(gameView: GameView) {
+class Game(
+    private val gameView: GameView,
+    private val soundEngine: SoundEngine
+) {
     enum class Difficulty(val numberOfMines: Int) {
         EASY(5), MEDIUM(10), HARD(20)
     }
@@ -65,6 +68,7 @@ class Game(gameView: GameView) {
             when (MainActivity.clickDuration) {
                 ClickDuration.LONG -> tappedCell.flag()
                 ClickDuration.SHORT -> {
+                    soundEngine.playPop()
                     tappedCell.uncover()
                     if (tappedCell.numBombsAround == 0 && !tappedCell.hasBomb) {
                         uncoverSafeNeighbourCells(tappedCell)
@@ -195,7 +199,7 @@ class Game(gameView: GameView) {
     }
 
     private fun setGameIsOver() {
-        // TODO boom sound here. Vibration would be great too
+        soundEngine.playExplosion()
         isRunning = false
         Log.d(TAG, "drawCellState: GAME OVER")
     }
