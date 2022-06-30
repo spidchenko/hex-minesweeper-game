@@ -1,13 +1,12 @@
 package d.spidchenko.canvasgame
 
+import android.graphics.PointF
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
 
 class Cell internal constructor(val q: Byte, val r: Byte) {
-
-    class FloatPoint(val x: Float = 0.0f, val y: Float = 0.0f)
 
     enum class State {
         UNCOVERED, COVERED, FLAGGED
@@ -16,14 +15,14 @@ class Cell internal constructor(val q: Byte, val r: Byte) {
     var state: State = State.COVERED
     var hasBomb = false
     var numBombsAround: Int = 0
-    val centerPoint: FloatPoint
+    val centerPoint: PointF
 
-    fun getNthHexCorner(n: Int, center: FloatPoint = centerPoint): FloatPoint {
+    fun getNthHexCorner(n: Int, center: PointF = centerPoint): PointF {
         val angleDeg = 60.0 * n - 30.0
         val angleRad = Math.PI / 180 * angleDeg
         val x = center.x + HEX_SIZE * cos(angleRad)
         val y = center.y + HEX_SIZE * sin(angleRad)
-        return FloatPoint(x.toFloat(), y.toFloat())
+        return PointF(x.toFloat(), y.toFloat())
     }
 
     fun uncover() {
@@ -54,7 +53,7 @@ class Cell internal constructor(val q: Byte, val r: Byte) {
     init {
         val centerX = GameView.canvasCenter.x + (HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r))
         val centerY = GameView.canvasCenter.y + (HEX_SIZE * (3.0 / 2 * r))
-        centerPoint = FloatPoint(centerX.toFloat(), centerY.toFloat())
+        centerPoint = PointF(centerX.toFloat(), centerY.toFloat())
     }
 
     companion object {

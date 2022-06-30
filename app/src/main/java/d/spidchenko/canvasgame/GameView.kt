@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.graphics.Canvas
 import android.graphics.Point
+import android.graphics.PointF
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.SurfaceHolder
@@ -43,7 +44,10 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
     private fun init() {
         canvasWidth = surfaceHolder.surfaceFrame.width()
         canvasHeight = surfaceHolder.surfaceFrame.height()
-        canvasCenter = Point(canvasWidth / 2, canvasHeight / 2)
+        canvasCenter = PointF(
+            surfaceHolder.surfaceFrame.exactCenterX(),
+            surfaceHolder.surfaceFrame.exactCenterY()
+        )
 
         Log.d(
             TAG,
@@ -98,7 +102,7 @@ class GameView(context: Context?) : SurfaceView(context), Runnable {
         private const val CELLS_IN_A_ROW = 11
         private const val ROWS = 13
         private const val SLEEP_MILLS = 17L
-        lateinit var canvasCenter: Point
+        lateinit var canvasCenter: PointF
     }
 
     init {
