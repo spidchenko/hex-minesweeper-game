@@ -20,9 +20,13 @@ class Cell internal constructor(val q: Byte, val r: Byte) {
     fun getNthHexCorner(n: Int, center: PointF = centerPoint): PointF {
         val angleDeg = 60.0 * n - 30.0
         val angleRad = Math.PI / 180 * angleDeg
-        val x = center.x + HEX_SIZE * cos(angleRad)
-        val y = center.y + HEX_SIZE * sin(angleRad)
-        return PointF(x.toFloat(), y.toFloat())
+        val dx = (HEX_SIZE * cos(angleRad)).toFloat()
+        val dy = (HEX_SIZE * sin(angleRad)).toFloat()
+
+        return PointF().also {
+            it.set(center)
+            it.offset(dx, dy)
+        }
     }
 
     fun uncover() {
