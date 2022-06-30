@@ -23,9 +23,9 @@ class Cell internal constructor(val q: Byte, val r: Byte) {
         val dx = (HEX_SIZE * cos(angleRad)).toFloat()
         val dy = (HEX_SIZE * sin(angleRad)).toFloat()
 
-        return PointF().also {
-            it.set(center)
-            it.offset(dx, dy)
+        return PointF().apply {
+            set(center)
+            offset(dx, dy)
         }
     }
 
