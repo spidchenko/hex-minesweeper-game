@@ -6,15 +6,23 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 
-class Cell internal constructor(val q: Byte, val r: Byte) {
+class Cell constructor(val q: Byte, val r: Byte) {
 
     enum class State {
         UNCOVERED, COVERED, FLAGGED
     }
 
-    var state: State = State.COVERED
+    private var state: State = State.COVERED
+    val isCovered: Boolean
+        get() = state == State.COVERED
+    val isFlagged: Boolean
+        get() = state == State.FLAGGED
+    val isUncovered: Boolean
+        get() = state == State.UNCOVERED
     var hasBomb = false
     var numBombsAround: Int = 0
+    val hasNoBombsAround: Boolean
+        get() = numBombsAround == 0
     val centerPoint: PointF
 
     fun getNthHexCorner(n: Int, center: PointF = centerPoint): PointF {
@@ -31,10 +39,7 @@ class Cell internal constructor(val q: Byte, val r: Byte) {
 
     fun uncover() {
         // TODO need sound here
-        state = when (state) {
-            State.COVERED -> State.UNCOVERED
-            else -> state // Do nothing
-        }
+        if (state == State.COVERED) state = State.UNCOVERED
     }
 
     override fun toString(): String {
@@ -48,10 +53,6 @@ class Cell internal constructor(val q: Byte, val r: Byte) {
             State.FLAGGED -> State.COVERED
             else -> state // Do nothing
         }
-    }
-
-    fun isFlagged(): Boolean {
-        return state == State.FLAGGED
     }
 
     init {

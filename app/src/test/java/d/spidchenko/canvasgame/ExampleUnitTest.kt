@@ -1,5 +1,6 @@
 package d.spidchenko.canvasgame
 
+import android.graphics.PointF
 import org.junit.Assert
 import org.junit.Test
 
@@ -11,19 +12,19 @@ import org.junit.Test
 class ExampleUnitTest {
     @Test
     fun uncover_covered_cell_isCorrect() {
-        GameView.canvasCenter = FloatPoint(0.0, 0.0)
+        GameView.canvasCenter = PointF(0.0F, 0.0F)
 
         val cell = Cell(q = 0, r = 0)
-        cell.state = Cell.State.COVERED
+        cell.isCovered
         cell.flag()
-        Assert.assertTrue(cell.state == Cell.State.FLAGGED)
+        Assert.assertTrue(cell.isFlagged)
         cell.uncover()
-        Assert.assertFalse(cell.state == Cell.State.UNCOVERED)
+        Assert.assertFalse(cell.isUncovered)
         cell.flag()
         cell.uncover()
-        Assert.assertEquals(cell.state, Cell.State.UNCOVERED)
-        cell.state = Cell.State.FLAGGED
+        Assert.assertTrue(cell.isUncovered)
+        cell.flag()
         cell.uncover()
-        Assert.assertTrue(cell.state == Cell.State.FLAGGED)
+        Assert.assertTrue(cell.isFlagged)
     }
 }

@@ -97,20 +97,20 @@ class Game(
 
     private fun drawCellState(canvas: Canvas, cell: Cell) {
         when {
-            cell.state == Cell.State.COVERED ->
+            cell.isCovered ->
                 drawText(cell, Cell.ICON_COVERED, textPaint, canvas)
 
-            cell.state == Cell.State.UNCOVERED && cell.hasBomb -> {
+            cell.isUncovered && cell.hasBomb -> {
                 drawText(cell, Cell.ICON_BOMB, textPaint, canvas)
                 setGameIsOver()
             }
 
-            cell.state == Cell.State.UNCOVERED && !cell.hasBomb ->
+            cell.isUncovered && !cell.hasBomb ->
                 if (cell.numBombsAround > 0) {
                     drawText(cell, cell.numBombsAround.toString(), textPaint, canvas)
                 }
 
-            cell.state == Cell.State.FLAGGED -> {
+            cell.isFlagged -> {
                 drawText(cell, Cell.ICON_FLAG, textPaint, canvas)
                 checkWinState()
             }
@@ -178,9 +178,9 @@ class Game(
 
     private fun uncoverSafeNeighbourCells(cell: Cell) {
         for (c in getNeighbours(cell)) {
-            if (c.state == Cell.State.COVERED) {
+            if (c.isCovered) {
                 c.uncover()
-                if (c.numBombsAround == 0) {
+                if (c.hasNoBombsAround) {
                     uncoverSafeNeighbourCells(c)
                 }
             }
