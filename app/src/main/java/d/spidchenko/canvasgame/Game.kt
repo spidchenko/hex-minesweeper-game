@@ -79,7 +79,7 @@ class Game(
     }
 
     private fun getNRandomCells(n: Int): List<Cell> {
-        val indexes = IntArray(cells.size) { it }.toMutableList() // 0, 1, 2, 3...
+        val indexes = MutableList(cells.size) { it } // 0, 1, 2, 3...
         val nRandomCells = mutableListOf<Cell>()
         indexes.shuffle()
         for (i in 0 until n) {
