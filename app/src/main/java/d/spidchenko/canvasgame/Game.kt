@@ -44,7 +44,7 @@ class Game(
     fun drawField(canvas: Canvas?) {
         if (canvas != null) {
             canvas.drawColor(Color.BLACK)
-            cells.forEach { cell -> drawSimpleCell(canvas, cell) }
+            cells.forEach { drawSimpleCell(canvas, it) }
             drawActiveCell(canvas)
             graduallyChangeGridColor()
         }
@@ -55,7 +55,7 @@ class Game(
         Log.d(TAG, "setMines: Cells - ${cells.size}. Mines - $numberOfMinesToSet")
         val randomCells = getNRandomCells(numberOfMinesToSet)
         cellsWithBombs.addAll(randomCells)
-        cellsWithBombs.forEach { cell -> cell.hasBomb = true }
+        cellsWithBombs.forEach { it.hasBomb = true }
         calcNumberOfNearestBombs()
     }
 
