@@ -43,12 +43,12 @@ class MainActivity : Activity(), View.OnTouchListener, View.OnClickListener,
 
     override fun onResume() {
         super.onResume()
-        gameEngine.resume()
+        gameEngine.startThread()
     }
 
     override fun onPause() {
         super.onPause()
-        gameEngine.pause()
+        gameEngine.stopThread()
     }
 
     companion object {

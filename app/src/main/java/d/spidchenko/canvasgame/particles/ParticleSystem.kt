@@ -3,6 +3,7 @@ package d.spidchenko.canvasgame.particles
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.PointF
+import android.util.Log
 import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
@@ -12,7 +13,7 @@ import kotlin.random.nextInt
 class ParticleSystem(totalParticles: Int) {
     private var duration = 0F
     private val particles = ArrayList<Particle>()
-    private var isRunning = false
+    var isRunning = false
 
     init {
         particles.clear()
@@ -28,6 +29,7 @@ class ParticleSystem(totalParticles: Int) {
     }
 
     fun update(fps: Long) {
+        Log.d(TAG, "updating particles: d=$duration fps=$fps")
         duration -= (1F / fps)
         particles.forEach { it.update() }
         if (duration < 0) isRunning = false
@@ -40,6 +42,7 @@ class ParticleSystem(totalParticles: Int) {
     }
 
     fun draw(canvas: Canvas, paint: Paint) {
+        Log.d(TAG, "drawing particles: ")
         particles.forEach {
             paint.setARGB(
                 255,
@@ -55,5 +58,8 @@ class ParticleSystem(totalParticles: Int) {
                 paint
             )
         }
+    }
+    companion object{
+        private const val TAG = "ParticleSystem.LOG_TAG"
     }
 }

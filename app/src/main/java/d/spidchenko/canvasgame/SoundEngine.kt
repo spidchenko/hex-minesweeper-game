@@ -8,6 +8,7 @@ class SoundEngine(context: Context) {
     private val soundPool: SoundPool
     private val explosionId: Int
     private val popId: Int
+    private val volume = 0.3F
 
     init {
         val audioAttributes = AudioAttributes.Builder()
@@ -31,8 +32,8 @@ class SoundEngine(context: Context) {
     fun playPop() = playSoundById(popId)
 
     private fun playSoundById(soundId: Int) {
-        val leftVolume = 1F
-        val rightVolume = 1F
+        val leftVolume = volume
+        val rightVolume = volume
         val priority = 0
         val loopMode = 0
         val rate = 1F
