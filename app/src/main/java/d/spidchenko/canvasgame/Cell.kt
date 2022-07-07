@@ -1,5 +1,7 @@
 package d.spidchenko.canvasgame
 
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.graphics.PointF
 import kotlin.math.cos
 import kotlin.math.sin
@@ -8,7 +10,7 @@ import kotlin.math.sqrt
 
 class Cell constructor(val q: Byte, val r: Byte) {
 
-    enum class State {
+    private enum class State {
         UNCOVERED, COVERED, FLAGGED
     }
 
@@ -55,9 +57,13 @@ class Cell constructor(val q: Byte, val r: Byte) {
         }
     }
 
+    fun draw(canvas: Canvas, paint: Paint){
+
+    }
+
     init {
-        val centerX = GameView.canvasCenter.x + (HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r))
-        val centerY = GameView.canvasCenter.y + (HEX_SIZE * (3.0 / 2 * r))
+        val centerX = GameEngine.canvasCenter.x + (HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r))
+        val centerY = GameEngine.canvasCenter.y + (HEX_SIZE * (3.0 / 2 * r))
         centerPoint = PointF(centerX.toFloat(), centerY.toFloat())
     }
 

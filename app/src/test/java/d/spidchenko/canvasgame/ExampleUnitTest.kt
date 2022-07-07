@@ -12,7 +12,7 @@ import org.junit.Test
 class ExampleUnitTest {
     @Test
     fun uncover_covered_cell_isCorrect() {
-        GameView.canvasCenter = PointF(0.0F, 0.0F)
+        GameEngine.canvasCenter = PointF(0.0F, 0.0F)
 
         val cell = Cell(q = 0, r = 0)
         cell.isCovered

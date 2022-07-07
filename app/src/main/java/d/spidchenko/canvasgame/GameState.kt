@@ -7,15 +7,15 @@ import android.graphics.Path
 import android.util.Log
 import kotlin.math.abs
 
-class Game(
-    private val gameView: GameView,
+class GameState(
+    private val gameEngine: GameEngine,
     private val soundEngine: SoundEngine
 ) {
     enum class Difficulty(val numberOfMines: Int) {
         EASY(5), MEDIUM(10), HARD(20)
     }
 
-    var isRunning = true
+    var isPlaying = false
     val cells = mutableListOf<Cell>()
     private val cellsWithBombs = mutableListOf<Cell>()
     private val tapManager: TapManager = TapManager(this)
@@ -37,7 +37,7 @@ class Game(
     private val textPaint: Paint = Paint().apply {
         color = Color.GRAY
         style = Paint.Style.FILL
-        textSize = gameView.convertDpToPixel(28f)
+        textSize = gameEngine.convertDpToPixel(28f)
         textAlign = Paint.Align.CENTER
     }
 
@@ -191,7 +191,7 @@ class Game(
         if (cellsWithBombs.size > 0) {
             val totalBombsFound = cellsWithBombs.count(Cell::isFlagged)
             if (totalBombsFound == cellsWithBombs.size) {
-                isRunning = false
+                isPlaying = false
                 // TODO happy music here
                 Log.d(TAG, "YOU WON")
             }
@@ -200,7 +200,7 @@ class Game(
 
     private fun setGameIsOver() {
         soundEngine.playExplosion()
-        isRunning = false
+        isPlaying = false
         Log.d(TAG, "drawCellState: GAME OVER")
     }
 

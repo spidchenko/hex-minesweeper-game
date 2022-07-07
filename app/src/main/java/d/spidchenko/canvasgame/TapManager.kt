@@ -5,7 +5,7 @@ import kotlin.math.hypot
 
 enum class ClickDuration { SHORT, LONG }
 
-class TapManager(private val game: Game) {
+class TapManager(private val gameState: GameState) {
 
     fun getIndexOfTappedCell(): Int? {
         val tap = MainActivity.lastClickCoordinates
@@ -13,10 +13,10 @@ class TapManager(private val game: Game) {
             Log.d(TAG, "getIndexOfTappedCell: x=${tap.x} y=${tap.y} ${MainActivity.clickDuration}")
             var nearestHexIndex: Int? = null
             var minDistance = Float.MAX_VALUE
-            for (i in game.cells.indices) {
+            for (i in gameState.cells.indices) {
                 val distance = hypot(
-                    (game.cells[i].centerPoint.x - tap.x),
-                    (game.cells[i].centerPoint.y - tap.y)
+                    (gameState.cells[i].centerPoint.x - tap.x),
+                    (gameState.cells[i].centerPoint.y - tap.y)
                 )
                 if (distance < minDistance) {
                     minDistance = distance

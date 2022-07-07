@@ -12,27 +12,41 @@ import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
 
-class GameView(context: Context) : SurfaceView(context), Runnable {
+class GameEngine(context: Context) : SurfaceView(context), Runnable {
     private val surfaceHolder: SurfaceHolder = holder
     private val paddingSize = 100
 
     private val soundEngine = SoundEngine(context)
-    private var game = Game(this, soundEngine)
+    private var gameState = GameState(this, soundEngine)
     private var firstTime = true
     private var canvasWidth: Int = 0
     private var canvasHeight: Int = 0
     private var cellWidth: Int = 0
     private var cellHeight: Int = 0
-    private var gameThread: Thread? = null
+    private lateinit var gameThread: Thread
     private var canvas: Canvas? = null
 
     override fun run() {
-        while (game.isRunning) {
+        while (gameState.isPlaying) {
             // TODO add pause game logic
             draw()
-            game.handleClicks()
+            gameState.handleClicks()
             waitSomeTime()
         }
+    }
+
+    fun pause() {
+        Log.d(TAG, "pause")
+        gameState.isPlaying = false
+        gameThread.join()
+    }
+
+    fun resume() {
+        Log.d(TAG, "resume")
+        gameState.isPlaying = true
+        // TODO Need to use Kotlin coroutines instead of Threads
+        gameThread = Thread(this)
+        gameThread.start()
     }
 
     fun convertDpToPixel(dp: Float): Float {
@@ -63,7 +77,7 @@ class GameView(context: Context) : SurfaceView(context), Runnable {
         Log.d(TAG, "init: numColumns = $numColumns")
         fillWithHexagons()
         //TODO set mines after first turn
-        game.setMines(Game.Difficulty.HARD)
+        gameState.setMines(GameState.Difficulty.HARD)
     }
 
     private fun fillWithHexagons() {
@@ -72,7 +86,7 @@ class GameView(context: Context) : SurfaceView(context), Runnable {
             val newXCord =
                 canvasCenter.x + Cell.HEX_SIZE * (sqrt(3.0) * q + sqrt(3.0) / 2 * r)
             if (newXCord > paddingSize && newXCord < canvasWidth - paddingSize) {
-                game.cells.add(Cell(q.toByte(), r.toByte()))
+                gameState.cells.add(Cell(q.toByte(), r.toByte()))
             }
         }
     }
@@ -84,7 +98,7 @@ class GameView(context: Context) : SurfaceView(context), Runnable {
                 firstTime = false
             }
             canvas = surfaceHolder.lockCanvas()
-            game.drawField(canvas)
+            gameState.drawField(canvas)
             surfaceHolder.unlockCanvasAndPost(canvas)
         }
     }
@@ -105,8 +119,8 @@ class GameView(context: Context) : SurfaceView(context), Runnable {
         lateinit var canvasCenter: PointF
     }
 
-    init {
-        gameThread = Thread(this)
-        gameThread?.start()
-    }
+//    init {
+//        gameThread = Thread(this)
+//        gameThread?.start()
+//    }
 }
