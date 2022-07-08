@@ -14,7 +14,7 @@ class GameEngine(context: Context) : SurfaceView(context), GameStarter, Runnable
     private val paddingSize = 100
     private val soundEngine = SoundEngine(context)
     private val gameState = GameState(context, this)
-    private val particleSystem = ParticleSystem(20)
+    private val particleSystem = ParticleSystem(50)
     private val renderer = Renderer(this)
     private val tapManager: TapManager = TapManager(gameState)
     private var canvasWidth: Int = 0
@@ -89,6 +89,9 @@ class GameEngine(context: Context) : SurfaceView(context), GameStarter, Runnable
                         tappedCell.uncover()
                         if (tappedCell.numBombsAround == 0 && !tappedCell.hasBomb) {
                             uncoverSafeNeighbourCells(tappedCell)
+                        }
+                        if (!gameState.isGameOver){
+                            gameState.checkGameOverState(soundEngine, particleSystem)
                         }
                     }
                 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.util.DisplayMetrics
 import android.util.Log
+import d.spidchenko.canvasgame.particles.ParticleSystem
 
 class GameState(
     private val context: Context,
@@ -18,6 +19,8 @@ class GameState(
     var isPaused = true
         private set
     var isGameOver = true
+        private set
+    var isGameWon = true
         private set
     var isDrawing = false
         private set
@@ -44,6 +47,7 @@ class GameState(
 
     fun resume() {
         isGameOver = false
+        isGameWon = false
         isPaused = false
     }
 
@@ -72,24 +76,37 @@ class GameState(
     }
 
 
-    private fun gameWin(soundEngine: SoundEngine) {
-        if (cellsWithBombs.size > 0) {
-            val totalBombsFound = cellsWithBombs.count(Cell::isFlagged)
-            if (totalBombsFound == cellsWithBombs.size) {
-                isThreadRunning = false
-                // TODO happy music here
-                Log.d(TAG, "YOU WON")
+    fun checkGameOverState(soundEngine: SoundEngine, particleSystem: ParticleSystem) {
+        if (!isGameOver || !isGameWon) {
+            when {
+                checkGameWin() -> {
+                    isGameWon = true
+                    isThreadRunning = false
+                    // TODO happy music here
+                    Log.d(TAG, "YOU WON")
+                }
+
+                chekGameLost() -> {
+                    isGameOver = true
+                    isPaused = true
+                    val explodedCell = cellsWithBombs.find { !it.isCovered }
+                    soundEngine.playExplosion()
+                    explodedCell?.let { particleSystem.emmitParticles(it.centerPoint) }
+                    Log.d(TAG, "GAME OVER")
+                }
             }
         }
     }
 
 
-    private fun endGame(soundEngine: SoundEngine) {
-        isGameOver = true
-        isPaused = true
-        soundEngine.playExplosion()
-        Log.d(TAG, "drawCellState: GAME OVER")
+    private fun checkGameWin(): Boolean {
+//        if (cellsWithBombs.size > 0) {
+        val totalBombsFound = cellsWithBombs.count(Cell::isFlagged)
+        return (totalBombsFound == cellsWithBombs.size)
+//        }
     }
+
+    private fun chekGameLost(): Boolean = cellsWithBombs.any { !it.isCovered }
 
     private fun convertDpToPixel(dp: Float): Float {
         val resources: Resources? = context.resources

@@ -29,7 +29,7 @@ class ParticleSystem(totalParticles: Int) {
     }
 
     fun update(fps: Long) {
-        Log.d(TAG, "updating particles: d=$duration fps=$fps")
+//        Log.d(TAG, "updating particles: d=$duration fps=$fps")
         duration -= (1F / fps)
         particles.forEach { it.update() }
         if (duration < 0) isRunning = false
@@ -37,12 +37,12 @@ class ParticleSystem(totalParticles: Int) {
 
     fun emmitParticles(startPosition: PointF) {
         isRunning = true
-        duration = 1F
+        duration = 2F
         particles.forEach { it.position = startPosition }
     }
 
     fun draw(canvas: Canvas, paint: Paint) {
-        Log.d(TAG, "drawing particles: ")
+//        Log.d(TAG, "drawing particles: ")
         particles.forEach {
             paint.setARGB(
                 255,

@@ -27,7 +27,7 @@ class Renderer(
                 )
             }
             canvas = surfaceHolder.lockCanvas()
-            canvas.drawColor(Color.BLACK)
+//            canvas.drawColor(Color.BLACK)
 
             if (gameState.isDrawing) {
                 canvas.drawColor(Color.BLACK)
@@ -37,7 +37,6 @@ class Renderer(
                         canvas,
                         paint,
                         gameState.textSize,
-                        particleSystem
                     )
                 }
 
@@ -46,7 +45,6 @@ class Renderer(
                         canvas,
                         paint,
                         gameState.textSize,
-                        particleSystem,
                         Cell.CellOutline.BOLD
                     )
                     gameState.activeCell = null
@@ -54,7 +52,14 @@ class Renderer(
             }
 
             if (gameState.isGameOver) {
-                //
+                // TODO Make separate function for this logic
+                if (alpha < 200) alpha+=10
+                paint.color = Color.argb(alpha, 0,0,0)
+                canvas.drawRect(0F, 0F, canvas.width.toFloat(), canvas.height.toFloat(), paint)
+                paint.textSize = 150F
+                paint.color = Color.argb(alpha, 255,0,0)
+                // TODO Use res. string here
+                canvas.drawText("Game Over", canvas.width/ 2F, canvas.height / 2F, paint)
             }
 
             if (particleSystem.isRunning) {
@@ -67,6 +72,7 @@ class Renderer(
     }
 
     companion object {
+        var alpha = 0
         private const val TAG = "Renderer.LOG_TAG"
     }
 }

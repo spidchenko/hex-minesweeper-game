@@ -32,7 +32,6 @@ class Cell constructor(val q: Byte, val r: Byte) {
         canvas: Canvas,
         paint: Paint,
         textSize: Float,
-        particleSystem: ParticleSystem,
         cellOutline: CellOutline = CellOutline.NORMAL
     ) {
         when (cellOutline) {
@@ -54,10 +53,14 @@ class Cell constructor(val q: Byte, val r: Byte) {
         }
 
         canvas.drawPath(getCellPath(), paint)
-        drawCellState(canvas, paint, particleSystem, textSize)
+        drawCellState(canvas, paint, textSize)
     }
 
-    private fun drawCellState(canvas: Canvas, paint: Paint, particleSystem: ParticleSystem, textSize: Float) {
+    private fun drawCellState(
+        canvas: Canvas,
+        paint: Paint,
+        textSize: Float
+    ) {
         paint.apply {
             color = Color.GRAY
             style = Paint.Style.FILL
@@ -66,27 +69,14 @@ class Cell constructor(val q: Byte, val r: Byte) {
         }
 
         when {
-            isCovered ->
-                drawText(ICON_COVERED, paint, canvas)
+            isCovered -> drawText(ICON_COVERED, paint, canvas)
 
-            isUncovered && hasBomb -> {
-                drawText(ICON_BOMB, paint, canvas)
-                if (!particleSystem.isRunning){
-                    particleSystem.emmitParticles(centerPoint)
-                }
-
-//                setGameIsOver()
-            }
+            isUncovered && hasBomb -> drawText(ICON_BOMB, paint, canvas)
 
             isUncovered && !hasBomb ->
-                if (numBombsAround > 0) {
-                    drawText(numBombsAround.toString(), paint, canvas)
-                }
+                if (numBombsAround > 0) drawText(numBombsAround.toString(), paint, canvas)
 
-            isFlagged -> {
-                drawText(ICON_FLAG, paint, canvas)
-//                checkWinState()
-            }
+            isFlagged -> drawText(ICON_FLAG, paint, canvas)
         }
     }
 
