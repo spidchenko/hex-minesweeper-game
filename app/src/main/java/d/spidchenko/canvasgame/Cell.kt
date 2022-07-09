@@ -1,7 +1,7 @@
 package d.spidchenko.canvasgame
 
 import android.graphics.*
-import d.spidchenko.canvasgame.particles.ParticleSystem
+import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
@@ -102,7 +102,7 @@ class Cell constructor(val q: Byte, val r: Byte) {
 
     private fun getNthHexCorner(n: Int, center: PointF = centerPoint): PointF {
         val angleDeg = 60.0 * n - 30.0
-        val angleRad = Math.PI / 180 * angleDeg
+        val angleRad = PI / 180 * angleDeg
         val dx = (HEX_SIZE * cos(angleRad)).toFloat()
         val dy = (HEX_SIZE * sin(angleRad)).toFloat()
 

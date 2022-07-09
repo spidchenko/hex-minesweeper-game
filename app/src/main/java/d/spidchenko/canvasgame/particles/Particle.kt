@@ -10,10 +10,6 @@ class Particle(velX: Double, velY: Double) {
     private val deltaVelocity = Vector2d(true)
     private val deltaPosition = Vector2d(true)
 
-//    private val velocity = PointF().apply { set(direction) }
-//    var position = PointF()
-//        set(value) = field.set(value)
-
     fun setStartPosition(startCoordinates: PointF){
         position.set(startCoordinates.x.toDouble() ,startCoordinates.y.toDouble())
     }
@@ -30,7 +26,6 @@ class Particle(velX: Double, velY: Double) {
             divide(fps)
         }
         velocity.add(deltaVelocity)
-//        position.offset(velocity.x, velocity.y)
     }
 
     companion object{

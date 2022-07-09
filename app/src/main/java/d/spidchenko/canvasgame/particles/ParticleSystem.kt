@@ -12,15 +12,16 @@ import kotlin.random.nextInt
 
 class ParticleSystem(totalParticles: Int) {
     private var duration = 0F
+    private val currentAlphaValue: Int
+        get() = ((duration * MAX_COLOR_COMPONENT_VALUE) / PARTICLES_LIFESPAN).roundToInt()
     private val particles = ArrayList<Particle>()
     var isRunning = false
 
     init {
         particles.clear()
         for (i in 0 until totalParticles) {
-            val angle = Random.nextInt(0..359) * PI / 180.0
-            val speed = Random.nextInt(1..400)
-
+            val angle = Random.nextDouble(FULL_CIRCLE)
+            val speed = Random.nextInt(1..PARTICLE_MAX_SPEED)
             particles.add(Particle((cos(angle) * speed), (sin(angle) * speed)))
         }
     }
@@ -39,19 +40,18 @@ class ParticleSystem(totalParticles: Int) {
     }
 
     fun draw(canvas: Canvas, paint: Paint) {
-//        Log.d(TAG, "drawing particles: ")
         particles.forEach {
             paint.setARGB(
-                ((duration * 255)/ PARTICLES_LIFESPAN).roundToInt(),
-                255,
-                Random.nextInt(0..255),
-                Random.nextInt(0..255)
+                currentAlphaValue,
+                Random.nextInt(0..MAX_COLOR_COMPONENT_VALUE),
+                Random.nextInt(0..MAX_COLOR_COMPONENT_VALUE),
+                Random.nextInt(0..MAX_COLOR_COMPONENT_VALUE)
             )
             canvas.drawRect(
                 it.position.x.toFloat(),
                 it.position.y.toFloat(),
-                (it.position.x + 25).toFloat(),
-                (it.position.y + 25).toFloat(),
+                (it.position.x + PARTICLE_SIZE).toFloat(),
+                (it.position.y + PARTICLE_SIZE).toFloat(),
                 paint
             )
         }
@@ -59,6 +59,10 @@ class ParticleSystem(totalParticles: Int) {
 
     companion object {
         private const val TAG = "ParticleSystem.LOG_TAG"
+        const val FULL_CIRCLE = PI * 2
         const val PARTICLES_LIFESPAN = 2F // In seconds
+        const val MAX_COLOR_COMPONENT_VALUE = 255
+        const val PARTICLE_SIZE = 25
+        const val PARTICLE_MAX_SPEED = 400
     }
 }
