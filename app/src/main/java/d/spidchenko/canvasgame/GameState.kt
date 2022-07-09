@@ -89,7 +89,7 @@ class GameState(
                 chekGameLost() -> {
                     isGameOver = true
                     isPaused = true
-                    val explodedCell = cellsWithBombs.find { !it.isCovered }
+                    val explodedCell = cellsWithBombs.find { it.isUncovered }
                     soundEngine.playExplosion()
                     explodedCell?.let { particleSystem.emmitParticles(it.centerPoint) }
                     Log.d(TAG, "GAME OVER")
@@ -106,7 +106,7 @@ class GameState(
 //        }
     }
 
-    private fun chekGameLost(): Boolean = cellsWithBombs.any { !it.isCovered }
+    private fun chekGameLost(): Boolean = cellsWithBombs.any { it.isUncovered }
 
     private fun convertDpToPixel(dp: Float): Float {
         val resources: Resources? = context.resources

@@ -20,7 +20,7 @@ class Cell constructor(val q: Byte, val r: Byte) {
         get() = state == State.COVERED
     val isFlagged: Boolean
         get() = state == State.FLAGGED
-    private val isUncovered: Boolean
+    val isUncovered: Boolean
         get() = state == State.UNCOVERED
     var hasBomb = false
     var numBombsAround: Int = 0
